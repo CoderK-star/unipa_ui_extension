@@ -26,6 +26,15 @@
 
   const clearData = document.getElementById("clearData");
   const message = document.getElementById("message");
+  const settingsToggle = document.getElementById("settingsToggle");
+  const settingsPanel = document.getElementById("settingsPanel");
+
+  settingsToggle.addEventListener("click", () => {
+    const isOpen = !settingsPanel.hidden;
+    settingsPanel.hidden = isOpen;
+    settingsToggle.setAttribute("aria-expanded", String(!isOpen));
+    settingsToggle.setAttribute("aria-label", isOpen ? "設定を開く" : "設定を閉じる");
+  });
 
   function load() {
     getSettings().then((settings) => {
@@ -68,6 +77,15 @@
       const status = result[storageKeys.keepaliveStatus];
       metrics.sessionState.textContent = status ? status.state : "未確認";
       metrics.sessionDetail.textContent = status ? status.detail : "待機中";
+
+      const sessionDot = document.getElementById("sessionDot");
+      if (sessionDot && status) {
+        sessionDot.dataset.state = status.state === "成功" || status.state === "有効" ? "ok" : status.state === "失敗" ? "bad" : "warn";
+        const pill = document.getElementById("sessionState");
+        if (pill) {
+          pill.className = "status-pill " + (sessionDot.dataset.state === "ok" ? "pill-ok" : sessionDot.dataset.state === "bad" ? "pill-bad" : "pill-warn");
+        }
+      }
     });
   }
 
@@ -81,8 +99,7 @@
       deadlineDashboardEnabled: fields.deadlineDashboardEnabled.checked,
       deadlineNotificationsEnabled: fields.deadlineNotificationsEnabled.checked,
       deadlineNotificationHours: clampNumber(fields.deadlineNotificationHours.value, 1, 168, 24),
-      commandPaletteEnabled: fields.commandPaletteEnabled.checked,
-      uiTheme: "light"
+      commandPaletteEnabled: fields.commandPaletteEnabled.checked
     };
 
     setSettings(settings)

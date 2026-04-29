@@ -21,8 +21,7 @@
       deadlineDashboardEnabled: true,
       deadlineNotificationsEnabled: false,
       deadlineNotificationHours: 24,
-      commandPaletteEnabled: true,
-      uiTheme: "light"
+      commandPaletteEnabled: true
     },
     limits: {
       navigationHistorySize: 10,

@@ -96,30 +96,37 @@
         .toolbar {
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 10px;
+          gap: var(--space-2);
+          padding: var(--space-2) var(--space-4);
           flex-wrap: wrap;
         }
         .label {
-          font-size: 13px;
-          font-weight: 800;
-          margin-right: 2px;
+          font-size: 10px;
+          font-weight: 500;
+          padding: 2px 8px;
+          border-radius: var(--radius-full);
+          background: var(--color-info-50);
+          color: var(--color-info-600);
+          white-space: nowrap;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
         }
         input {
-          min-width: 180px;
-          flex: 1 1 180px;
+          min-width: 160px;
+          flex: 1 1 160px;
         }
         select {
           display: none;
         }
         .count {
           margin-left: auto;
-          font-size: 12px;
+          font-size: 11px;
           white-space: nowrap;
+          color: var(--text-tertiary);
         }
       </style>
       <div class="panel toolbar">
-        <strong class="label">掲示板</strong>
+        <span class="label">UNIPA+</span>
         <input data-search type="search" placeholder="掲示を絞り込み">
         <button class="chip active" data-mode-button="all" type="button" aria-pressed="true">すべて</button>
         <button class="chip" data-mode-button="unread" type="button" aria-pressed="false">未読</button>

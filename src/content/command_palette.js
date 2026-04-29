@@ -125,75 +125,119 @@
     shadow.innerHTML = `
       <style>${baseStyles()}
         .palette {
-          width: min(680px, calc(100vw - 32px));
-          max-height: min(640px, calc(100vh - 120px));
+          width: min(var(--palette-width), calc(100vw - 32px));
+          max-height: min(560px, calc(100vh - 120px));
           display: grid;
-          grid-template-rows: auto 1fr;
+          grid-template-rows: auto 1fr auto;
           overflow: hidden;
-          background: #ffffff;
         }
         .search {
           display: grid;
-          gap: 6px;
-          padding: 12px;
-          border-bottom: 1px solid #eef2f7;
+          gap: var(--space-2);
+          padding: var(--space-3) var(--space-4);
+          border-bottom: var(--border-width-default) solid var(--border-default);
         }
         .search input {
           width: 100%;
-          min-height: 42px;
-          font-size: 15px;
+          min-height: 40px;
+          font-size: 14px;
+          border-color: transparent;
+          background: transparent;
+          padding-left: 0;
+        }
+        .search input:focus {
+          outline: none;
+          border-color: transparent;
         }
         .hint {
-          font-size: 12px;
+          font-size: 11px;
         }
         .results {
           overflow: auto;
-          padding: 8px;
+          padding: var(--space-1);
         }
         .result {
           width: 100%;
           display: grid;
           grid-template-columns: 1fr auto;
-          gap: 8px;
+          gap: var(--space-2);
           align-items: center;
           min-height: 48px;
-          border: 1px solid transparent;
-          background: #ffffff;
+          padding: var(--space-2) var(--space-4);
+          border: var(--border-width-default) solid transparent;
+          border-radius: var(--radius-md);
+          background: var(--bg-primary);
           text-align: left;
+          transition: background 100ms ease;
         }
+        .result:hover,
         .result[aria-selected="true"] {
-          border-color: #bfdbfe;
-          background: var(--unipa-blue-soft);
+          border-color: transparent;
+          background: var(--bg-secondary);
         }
         .title {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-weight: 800;
+          font-size: 13px;
+          font-weight: 500;
+          color: var(--text-primary);
         }
         .subtitle {
           margin-top: 2px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-size: 12px;
+          font-size: 11px;
+          color: var(--text-tertiary);
         }
         .badge {
-          color: #475467;
-          font-size: 12px;
-          font-weight: 700;
+          font-size: 10px;
+          font-weight: 500;
+          padding: 2px 7px;
+          border: var(--border-width-default) solid var(--border-emphasis);
+          border-radius: var(--radius-full);
+          color: var(--text-secondary);
+          font-family: monospace;
+        }
+        .footer {
+          border-top: var(--border-width-default) solid var(--border-default);
+          padding: var(--space-2) var(--space-4);
+          display: flex;
+          gap: var(--space-4);
+          align-items: center;
+        }
+        .footer-hint {
+          font-size: 11px;
+          color: var(--text-tertiary);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .footer-hint kbd {
+          padding: 1px 5px;
+          border: var(--border-width-default) solid var(--border-emphasis);
+          border-radius: var(--radius-sm);
+          font-family: monospace;
+          font-size: 10px;
+          color: var(--text-secondary);
         }
         .empty {
-          padding: 18px 10px;
-          font-size: 13px;
+          padding: 18px var(--space-3);
+          font-size: 12px;
         }
       </style>
       <div class="panel palette" role="dialog" aria-modal="true" aria-label="コマンドパレット">
         <div class="search">
           <input data-query type="search" placeholder="移動先や操作を検索" autocomplete="off">
-          <div class="hint muted">Enterで実行、Escで閉じる、Ctrl+Kで再表示</div>
+          <div class="hint muted">検索ワードを入力…</div>
         </div>
         <div class="results" data-results></div>
+        <div class="footer">
+          <span class="footer-hint"><kbd>↑↓</kbd> 選択</span>
+          <span class="footer-hint"><kbd>↵</kbd> 実行</span>
+          <span class="footer-hint"><kbd>Esc</kbd> 閉じる</span>
+        </div>
       </div>
     `;
 

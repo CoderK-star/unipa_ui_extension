@@ -7,13 +7,176 @@
     <link rel="stylesheet" href="popup.css">
   </head>
   <body>
-    <main class="shell">
-      <header class="hero">
+    <div class="popup-shell">
+      <header class="popup-header">
+        <div class="logo-group">
+          <span class="logo-mark" aria-hidden="true">U+</span>
+          <div>
+            <div class="popup-title">UNIPA UI ヘルパー</div>
+            <div class="popup-sub">UNIPA補助ツール</div>
+          </div>
+        </div>
+        <div class="icon-btn-group">
+          <button id="settingsToggle" type="button" class="icon-btn" aria-label="設定を開く" aria-expanded="false" aria-controls="settingsPanel" title="設定">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.3 9.9a1.1 1.1 0 0 0 .22 1.22l.04.04a1.33 1.33 0 1 1-1.88 1.88l-.04-.04a1.1 1.1 0 0 0-1.22-.22 1.1 1.1 0 0 0-.67 1.01V14a1.33 1.33 0 0 1-2.67 0v-.06A1.1 1.1 0 0 0 6.37 13a1.1 1.1 0 0 0-1.22.22l-.04.04a1.33 1.33 0 1 1-1.88-1.88l.04-.04A1.1 1.1 0 0 0 3.49 10a1.1 1.1 0 0 0-1.01-.67H2a1.33 1.33 0 0 1 0-2.67h.06A1.1 1.1 0 0 0 3 5.63a1.1 1.1 0 0 0-.22-1.22l-.04-.04a1.33 1.33 0 1 1 1.88-1.88l.04.04A1.1 1.1 0 0 0 5.88 2.75a1.1 1.1 0 0 0 .67-1.01V1.67a1.33 1.33 0 0 1 2.67 0v.06a1.1 1.1 0 0 0 .67 1.01 1.1 1.1 0 0 0 1.22-.22l.04-.04a1.33 1.33 0 1 1 1.88 1.88l-.04.04A1.1 1.1 0 0 0 12.75 5.88a1.1 1.1 0 0 0 1.01.67H14a1.33 1.33 0 0 1 0 2.67h-.06a1.1 1.1 0 0 0-1.01.67h.01Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="popup-body">
+        <section aria-label="システム状態">
+          <div class="section-label">STATUS</div>
+          <div class="status-row">
+            <span class="status-dot" id="sessionDot" data-state="warn" aria-hidden="true"></span>
+            <span class="status-text">セッション維持</span>
+            <span class="status-pill pill-warn" id="sessionState">未確認</span>
+          </div>
+          <div class="status-row">
+            <span class="status-dot" data-state="ok" aria-hidden="true"></span>
+            <span class="status-text">自動保存</span>
+            <span class="status-pill pill-ok">有効</span>
+          </div>
+        </section>
+
+        <section aria-label="サマリー">
+          <div class="section-label">SUMMARY</div>
+          <div class="bento-grid">
+            <div class="bento-card">
+              <div class="bento-num" id="deadlineCount">0件</div>
+              <div class="bento-label">締切</div>
+              <span class="bento-accent accent-danger" id="deadlineSummary">検出なし</span>
+            </div>
+            <div class="bento-card">
+              <div class="bento-num" id="bulletinCount">0件</div>
+              <div class="bento-label">掲示</div>
+              <span class="bento-accent accent-info">既読管理</span>
+            </div>
+            <div class="bento-card bento-wide">
+              <div class="bento-wide-inner">
+                <div>
+                  <div class="bento-num" id="draftCount">0件</div>
+                  <div class="bento-label">下書き</div>
+                  <span class="bento-accent accent-success">端末内保存</span>
+                </div>
+                <div>
+                  <div class="bento-num bento-num-sm" id="sessionDetail">待機中</div>
+                  <div class="bento-label">セッション確認</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="クイックナビゲーション">
+          <div class="section-label">QUICK NAV</div>
+          <div class="hint-box">
+            <span class="hint-kbd">⌘K / Ctrl+K</span>
+            <p>UNIPA内の移動先やページ操作をすばやく検索できます。</p>
+          </div>
+        </section>
+      </main>
+
+      <div id="settingsPanel" class="settings-panel" hidden>
+        <section class="settings">
+          <h2>基本</h2>
+          <label class="setting-row">
+            <span>
+              <strong>自動保存</strong>
+              <small>入力内容をこの端末だけに保存します。</small>
+            </span>
+            <input id="autosaveEnabled" type="checkbox">
+          </label>
+          <label class="setting-row">
+            <span>
+              <strong>セッション維持</strong>
+              <small>有効時のみ軽量リクエストを送信します。</small>
+            </span>
+            <input id="keepaliveEnabled" type="checkbox">
+          </label>
+          <label class="number-row">
+            <span>確認間隔</span>
+            <input id="keepaliveIntervalMinutes" type="number" min="5" max="30" step="1">
+            <span class="unit">分</span>
+          </label>
+        </section>
+
+        <section class="settings">
+          <h2>情報整理</h2>
+          <label class="setting-row">
+            <span>
+              <strong>掲示板ツール</strong>
+              <small>検索、未読、締切順のフィルタを追加します。</small>
+            </span>
+            <input id="bulletinEnhancerEnabled" type="checkbox">
+          </label>
+          <label class="setting-row">
+            <span>
+              <strong>PDFプレビュー</strong>
+              <small>PDFリンクをページ内で確認します。</small>
+            </span>
+            <input id="pdfViewerEnabled" type="checkbox">
+          </label>
+          <label class="setting-row">
+            <span>
+              <strong>締切ダッシュボード</strong>
+              <small>検出した提出期限を画面上にまとめます。</small>
+            </span>
+            <input id="deadlineDashboardEnabled" type="checkbox">
+          </label>
+          <label class="setting-row">
+            <span>
+              <strong>締切通知</strong>
+              <small>有効時のみデスクトップ通知します。</small>
+            </span>
+            <input id="deadlineNotificationsEnabled" type="checkbox">
+          </label>
+          <label class="number-row">
+            <span>通知タイミング</span>
+            <input id="deadlineNotificationHours" type="number" min="1" max="168" step="1">
+            <span class="unit">時間前</span>
+          </label>
+        </section>
+
+        <section class="settings">
+          <h2>操作性</h2>
+          <label class="setting-row">
+            <span>
+              <strong>コマンドパレット</strong>
+              <small>Ctrl+K / ⌘K で移動先や操作を検索します。</small>
+            </span>
+            <input id="commandPaletteEnabled" type="checkbox">
+          </label>
+          <div class="theme-note">テーマは常に白テーマで固定されます。</div>
+        </section>
+
+        <section class="danger-zone">
+          <button id="clearData" type="button">ローカルデータを削除</button>
+          <p id="message" role="status"></p>
+        </section>
+      </div>
+    </div>
+
+    <script src="../shared/constants.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
         <div>
           <p class="eyebrow">UNIPA補助ツール</p>
           <h1>UNIPA UI ヘルパー</h1>
         </div>
-        <span class="shortcut">Ctrl K</span>
+        <div class="header-actions">
+          <span class="shortcut">Ctrl K</span>
+          <button id="settingsToggle" type="button" class="gear-btn" aria-label="設定を開く" aria-expanded="false" aria-controls="settingsPanel" title="設定">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M13.3 9.9a1.1 1.1 0 0 0 .22 1.22l.04.04a1.33 1.33 0 1 1-1.88 1.88l-.04-.04a1.1 1.1 0 0 0-1.22-.22 1.1 1.1 0 0 0-.67 1.01V14a1.33 1.33 0 0 1-2.67 0v-.06A1.1 1.1 0 0 0 6.37 13a1.1 1.1 0 0 0-1.22.22l-.04.04a1.33 1.33 0 1 1-1.88-1.88l.04-.04A1.1 1.1 0 0 0 3.49 10a1.1 1.1 0 0 0-1.01-.67H2a1.33 1.33 0 0 1 0-2.67h.06A1.1 1.1 0 0 0 3 5.63a1.1 1.1 0 0 0-.22-1.22l-.04-.04a1.33 1.33 0 1 1 1.88-1.88l.04.04A1.1 1.1 0 0 0 5.88 2.75a1.1 1.1 0 0 0 .67-1.01V1.67a1.33 1.33 0 0 1 2.67 0v.06a1.1 1.1 0 0 0 .67 1.01 1.1 1.1 0 0 0 1.22-.22l.04-.04a1.33 1.33 0 1 1 1.88 1.88l-.04.04A1.1 1.1 0 0 0 12.75 5.88a1.1 1.1 0 0 0 1.01.67H14a1.33 1.33 0 0 1 0 2.67h-.06a1.1 1.1 0 0 0-1.01.67h.01Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
       </header>
 
       <section class="summary" aria-label="現在の状態">
@@ -44,6 +207,7 @@
         <p>UNIPA内の移動先やページ操作をすばやく検索できます。</p>
       </section>
 
+      <div id="settingsPanel" class="settings-panel" hidden>
       <section class="settings">
         <h2>基本</h2>
         <label class="setting-row">
@@ -120,6 +284,7 @@
         <button id="clearData" type="button">ローカルデータを削除</button>
         <p id="message" role="status"></p>
       </section>
+      </div>
     </main>
 
     <script src="../shared/constants.js"></script>
