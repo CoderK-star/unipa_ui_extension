@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "UNIPA UI ヘルパー",
+  "version": "0.1.0",
+  "description": "UNIVERSAL PASSPORT向けのローカル限定UI改善拡張機能です。",
+  "permissions": [
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background/service_worker.js"
+  },
+  "action": {
+    "default_title": "UNIPA UI ヘルパー",
+    "default_popup": "src/popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*",
+        "file:///*"
+      ],
+      "js": [
+        "src/shared/constants.js",
+        "src/shared/storage.js",
+        "src/shared/selectors.js",
+        "src/content/ui.js",
+        "src/content/autosave.js",
+        "src/content/navigation.js",
+        "src/content/main.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
