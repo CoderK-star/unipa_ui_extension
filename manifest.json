@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "UNIPA UI ヘルパー",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "UNIVERSAL PASSPORT の画面をローカルだけで使いやすくする拡張機能です。",
   "permissions": [
     "alarms",
@@ -35,6 +35,7 @@
         "src/content/bulletin.js",
         "src/content/pdf_viewer.js",
         "src/content/deadline_dashboard.js",
+        "src/content/command_palette.js",
         "src/content/main.js"
       ],
       "run_at": "document_idle"

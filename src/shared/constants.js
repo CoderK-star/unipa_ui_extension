@@ -20,7 +20,9 @@
       pdfViewerEnabled: true,
       deadlineDashboardEnabled: true,
       deadlineNotificationsEnabled: false,
-      deadlineNotificationHours: 24
+      deadlineNotificationHours: 24,
+      commandPaletteEnabled: true,
+      uiTheme: "light"
     },
     limits: {
       navigationHistorySize: 10,
@@ -37,7 +39,8 @@
       navRootId: "unipa-ui-helper-nav-root",
       bulletinRootId: "unipa-ui-helper-bulletin-root",
       pdfRootId: "unipa-ui-helper-pdf-root",
-      deadlineRootId: "unipa-ui-helper-deadline-root"
+      deadlineRootId: "unipa-ui-helper-deadline-root",
+      commandPaletteRootId: "unipa-ui-helper-command-palette-root"
     },
     messages: {
       pageSeen: "UNIPA_PAGE_SEEN",

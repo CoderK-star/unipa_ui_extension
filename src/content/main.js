@@ -38,6 +38,10 @@
       if (settings.deadlineDashboardEnabled) {
         namespace.deadlineDashboard.start(settings);
       }
+
+      if (settings.commandPaletteEnabled) {
+        namespace.commandPalette.start();
+      }
     });
   }
 

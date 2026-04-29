@@ -11,7 +11,8 @@
     pdfViewerEnabled: document.getElementById("pdfViewerEnabled"),
     deadlineDashboardEnabled: document.getElementById("deadlineDashboardEnabled"),
     deadlineNotificationsEnabled: document.getElementById("deadlineNotificationsEnabled"),
-    deadlineNotificationHours: document.getElementById("deadlineNotificationHours")
+    deadlineNotificationHours: document.getElementById("deadlineNotificationHours"),
+    commandPaletteEnabled: document.getElementById("commandPaletteEnabled")
   };
 
   const keepaliveStatus = document.getElementById("keepaliveStatus");
@@ -47,7 +48,9 @@
       pdfViewerEnabled: fields.pdfViewerEnabled.checked,
       deadlineDashboardEnabled: fields.deadlineDashboardEnabled.checked,
       deadlineNotificationsEnabled: fields.deadlineNotificationsEnabled.checked,
-      deadlineNotificationHours: clampNumber(fields.deadlineNotificationHours.value, 1, 168, 24)
+      deadlineNotificationHours: clampNumber(fields.deadlineNotificationHours.value, 1, 168, 24),
+      commandPaletteEnabled: fields.commandPaletteEnabled.checked,
+      uiTheme: "light"
     };
 
     setSettings(settings)

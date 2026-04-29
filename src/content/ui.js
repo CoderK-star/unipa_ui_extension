@@ -37,6 +37,7 @@
         box-sizing: border-box;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         letter-spacing: 0;
+        color-scheme: light;
       }
       button, select, input {
         font-family: inherit;
