@@ -88,7 +88,7 @@
       board.element.parentElement.insertBefore(mountHost, board.element);
       mountHost.style.position = "static";
       mountHost.style.display = "block";
-      mountHost.style.margin = "8px 0";
+      mountHost.style.margin = "10px 0";
     }
 
     shadow.innerHTML = `
@@ -100,9 +100,17 @@
           padding: 10px;
           flex-wrap: wrap;
         }
+        .label {
+          font-size: 13px;
+          font-weight: 800;
+          margin-right: 2px;
+        }
         input {
           min-width: 180px;
           flex: 1 1 180px;
+        }
+        select {
+          display: none;
         }
         .count {
           margin-left: auto;
@@ -111,26 +119,46 @@
         }
       </style>
       <div class="panel toolbar">
-        <strong>掲示板ツール</strong>
+        <strong class="label">掲示板</strong>
         <input data-search type="search" placeholder="掲示を絞り込み">
+        <button class="chip active" data-mode-button="all" type="button" aria-pressed="true">すべて</button>
+        <button class="chip" data-mode-button="unread" type="button" aria-pressed="false">未読</button>
+        <button class="chip" data-mode-button="deadline" type="button" aria-pressed="false">締切順</button>
+        <button class="chip" data-mark-read type="button">表示中を既読</button>
         <select data-mode>
           <option value="all">すべて</option>
           <option value="unread">未読のみ</option>
           <option value="deadline">締切が近い順</option>
         </select>
-        <button data-mark-read type="button">表示中を既読</button>
         <span class="count muted" data-count></span>
       </div>
     `;
 
     shadow.querySelector("[data-search]").addEventListener("input", applyFilters);
-    shadow.querySelector("[data-mode]").addEventListener("change", applyFilters);
+    shadow.querySelectorAll("[data-mode-button]").forEach((button) => {
+      button.addEventListener("click", () => setMode(button.dataset.modeButton));
+    });
     shadow.querySelector("[data-mark-read]").addEventListener("click", markVisibleRead);
   }
 
   function getToolbar() {
     const host = Array.from(document.querySelectorAll(`[id^="${ui.bulletinRootId}"]`))[0];
     return host && host.shadowRoot;
+  }
+
+  function setMode(mode) {
+    const toolbar = getToolbar();
+    if (!toolbar) {
+      return;
+    }
+
+    toolbar.querySelector("[data-mode]").value = mode;
+    toolbar.querySelectorAll("[data-mode-button]").forEach((button) => {
+      const active = button.dataset.modeButton === mode;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    applyFilters();
   }
 
   function applyFilters() {

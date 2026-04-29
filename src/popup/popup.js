@@ -15,7 +15,15 @@
     commandPaletteEnabled: document.getElementById("commandPaletteEnabled")
   };
 
-  const keepaliveStatus = document.getElementById("keepaliveStatus");
+  const metrics = {
+    deadlineCount: document.getElementById("deadlineCount"),
+    deadlineSummary: document.getElementById("deadlineSummary"),
+    bulletinCount: document.getElementById("bulletinCount"),
+    draftCount: document.getElementById("draftCount"),
+    sessionState: document.getElementById("sessionState"),
+    sessionDetail: document.getElementById("sessionDetail")
+  };
+
   const clearData = document.getElementById("clearData");
   const message = document.getElementById("message");
 
@@ -33,9 +41,33 @@
       });
     });
 
-    read(storageKeys.keepaliveStatus).then((result) => {
+    loadMetrics();
+  }
+
+  function loadMetrics() {
+    read([
+      storageKeys.deadlineEntries,
+      storageKeys.bulletinReadItems,
+      storageKeys.autosaveEntries,
+      storageKeys.keepaliveStatus
+    ]).then((result) => {
+      const deadlines = (result[storageKeys.deadlineEntries] || [])
+        .filter((entry) => Date.parse(entry.dueAt) > Date.now())
+        .sort((left, right) => Date.parse(left.dueAt) - Date.parse(right.dueAt));
+      metrics.deadlineCount.textContent = `${deadlines.length}件`;
+      metrics.deadlineSummary.textContent = deadlines[0]
+        ? `次: ${formatDate(deadlines[0].dueAt)}`
+        : "検出なし";
+
+      const readItems = result[storageKeys.bulletinReadItems] || {};
+      metrics.bulletinCount.textContent = `${Object.keys(readItems).length}件`;
+
+      const drafts = result[storageKeys.autosaveEntries] || {};
+      metrics.draftCount.textContent = `${Object.keys(drafts).length}件`;
+
       const status = result[storageKeys.keepaliveStatus];
-      keepaliveStatus.textContent = status ? `${status.state}: ${status.detail}` : "未確認";
+      metrics.sessionState.textContent = status ? status.state : "未確認";
+      metrics.sessionDetail.textContent = status ? status.detail : "待機中";
     });
   }
 
@@ -71,6 +103,11 @@
     return Math.min(max, Math.max(min, number));
   }
 
+  function formatDate(value) {
+    const date = new Date(value);
+    return `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  }
+
   Object.values(fields).forEach((element) => {
     if (element) {
       element.addEventListener("change", save);
@@ -80,7 +117,7 @@
   clearData.addEventListener("click", () => {
     sendMessage({ type: messages.clearLocalData }).then(() => {
       message.textContent = "下書き、掲示板、ナビゲーション、締切のローカルデータを削除しました。";
-      load();
+      loadMetrics();
     });
   });
 

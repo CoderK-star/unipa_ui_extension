@@ -7,93 +7,119 @@
     <link rel="stylesheet" href="popup.css">
   </head>
   <body>
-    <main>
-      <h1>UNIPA UI ヘルパー</h1>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">UNIPA補助ツール</p>
+          <h1>UNIPA UI ヘルパー</h1>
+        </div>
+        <span class="shortcut">Ctrl K</span>
+      </header>
 
-      <section>
-        <h2>基本機能</h2>
-        <label class="row">
+      <section class="summary" aria-label="現在の状態">
+        <article class="metric metric-deadline">
+          <span class="metric-label">締切</span>
+          <strong id="deadlineCount">0件</strong>
+          <small id="deadlineSummary">検出なし</small>
+        </article>
+        <article class="metric metric-bulletin">
+          <span class="metric-label">掲示</span>
+          <strong id="bulletinCount">0件</strong>
+          <small>既読管理</small>
+        </article>
+        <article class="metric metric-draft">
+          <span class="metric-label">下書き</span>
+          <strong id="draftCount">0件</strong>
+          <small>端末内保存</small>
+        </article>
+        <article class="metric metric-session">
+          <span class="metric-label">セッション</span>
+          <strong id="sessionState">未確認</strong>
+          <small id="sessionDetail">待機中</small>
+        </article>
+      </section>
+
+      <section class="hint">
+        <span>⌘K / Ctrl+K</span>
+        <p>UNIPA内の移動先やページ操作をすばやく検索できます。</p>
+      </section>
+
+      <section class="settings">
+        <h2>基本</h2>
+        <label class="setting-row">
           <span>
             <strong>自動保存</strong>
             <small>入力内容をこの端末だけに保存します。</small>
           </span>
           <input id="autosaveEnabled" type="checkbox">
         </label>
-
-        <label class="row">
+        <label class="setting-row">
           <span>
             <strong>セッション維持</strong>
-            <small>明示的に有効化した場合だけ軽量リクエストを送ります。</small>
+            <small>有効時のみ軽量リクエストを送信します。</small>
           </span>
           <input id="keepaliveEnabled" type="checkbox">
         </label>
-
-        <label class="field">
-          <span>セッション確認間隔（分）</span>
+        <label class="number-row">
+          <span>確認間隔</span>
           <input id="keepaliveIntervalMinutes" type="number" min="5" max="30" step="1">
+          <span class="unit">分</span>
         </label>
       </section>
 
-      <section>
+      <section class="settings">
         <h2>情報整理</h2>
-        <label class="row">
+        <label class="setting-row">
           <span>
             <strong>掲示板ツール</strong>
-            <small>掲示の検索、並べ替え、既読管理を追加します。</small>
+            <small>検索、未読、締切順のフィルタを追加します。</small>
           </span>
           <input id="bulletinEnhancerEnabled" type="checkbox">
         </label>
-
-        <label class="row">
+        <label class="setting-row">
           <span>
             <strong>PDFプレビュー</strong>
-            <small>PDFリンクをページ内で確認できるようにします。</small>
+            <small>PDFリンクをページ内で確認します。</small>
           </span>
           <input id="pdfViewerEnabled" type="checkbox">
         </label>
-
-        <label class="row">
+        <label class="setting-row">
           <span>
             <strong>締切ダッシュボード</strong>
             <small>検出した提出期限を画面上にまとめます。</small>
           </span>
           <input id="deadlineDashboardEnabled" type="checkbox">
         </label>
-
-        <label class="row">
+        <label class="setting-row">
           <span>
             <strong>締切通知</strong>
-            <small>明示的に有効化した場合だけデスクトップ通知します。</small>
+            <small>有効時のみデスクトップ通知します。</small>
           </span>
           <input id="deadlineNotificationsEnabled" type="checkbox">
         </label>
-
-        <label class="field">
-          <span>通知する残り時間（時間）</span>
+        <label class="number-row">
+          <span>通知タイミング</span>
           <input id="deadlineNotificationHours" type="number" min="1" max="168" step="1">
+          <span class="unit">時間前</span>
         </label>
       </section>
 
-      <section>
+      <section class="settings">
         <h2>操作性</h2>
-        <label class="row">
+        <label class="setting-row">
           <span>
             <strong>コマンドパレット</strong>
             <small>Ctrl+K / ⌘K で移動先や操作を検索します。</small>
           </span>
           <input id="commandPaletteEnabled" type="checkbox">
         </label>
-
-        <div class="note">テーマは常に白テーマで固定されます。</div>
+        <div class="theme-note">テーマは常に白テーマで固定されます。</div>
       </section>
 
-      <section class="status">
-        <span>状態</span>
-        <strong id="keepaliveStatus">未確認</strong>
+      <section class="danger-zone">
+        <button id="clearData" type="button">ローカルデータを削除</button>
+        <p id="message" role="status"></p>
       </section>
-
-      <button id="clearData" class="danger" type="button">ローカルデータを削除</button>
-      <p id="message" role="status"></p>
     </main>
 
     <script src="../shared/constants.js"></script>

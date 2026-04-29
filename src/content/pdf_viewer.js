@@ -39,8 +39,8 @@
     shadow.innerHTML = `
       <style>${baseStyles()}
         .preview {
-          width: min(520px, calc(100vw - 32px));
-          height: min(540px, calc(100vh - 120px));
+          width: min(540px, calc(100vw - 32px));
+          height: min(560px, calc(100vh - 120px));
           display: grid;
           grid-template-rows: auto 1fr;
           overflow: hidden;
@@ -49,8 +49,8 @@
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 8px;
-          border-bottom: 1px solid #e1e7ef;
+          padding: 10px 12px;
+          border-bottom: 1px solid #eef2f7;
         }
         .title {
           min-width: 0;
@@ -59,7 +59,7 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           font-size: 13px;
-          font-weight: 600;
+          font-weight: 800;
         }
         iframe {
           width: 100%;
@@ -71,7 +71,7 @@
       <div class="panel preview">
         <div class="header">
           <span class="title">${escapeHtml(link.textContent || "PDFプレビュー")}</span>
-          <button data-open type="button">開く</button>
+          <button class="primary" data-open type="button">開く</button>
           <button data-close type="button">閉じる</button>
         </div>
         <iframe title="PDFプレビュー" src="${escapeHtml(url)}"></iframe>

@@ -96,8 +96,8 @@
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 10px;
-          border-bottom: 1px solid #e1e7ef;
+          padding: 10px 12px;
+          border-bottom: 1px solid #eef2f7;
         }
         .header strong {
           flex: 1;
@@ -113,37 +113,40 @@
           display: grid;
           gap: 4px;
           padding: 8px;
-          border: 1px solid #e1e7ef;
+          border: 1px solid #eef2f7;
           border-left-width: 4px;
-          border-radius: 6px;
+          border-radius: 7px;
           background: #ffffff;
         }
         .item.soon {
-          border-left-color: #dc2626;
+          border-left-color: var(--unipa-red);
+          background: var(--unipa-red-soft);
         }
         .item.medium {
-          border-left-color: #d97706;
+          border-left-color: var(--unipa-amber);
+          background: var(--unipa-amber-soft);
         }
         .item.later {
-          border-left-color: #16a34a;
+          border-left-color: var(--unipa-green);
+          background: var(--unipa-green-soft);
         }
         .item-title {
           font-size: 13px;
-          font-weight: 600;
+          font-weight: 700;
           overflow-wrap: anywhere;
         }
         .meta {
           font-size: 12px;
         }
         .empty {
-          padding: 8px;
+          padding: 10px;
           font-size: 12px;
         }
       </style>
       <div class="panel dashboard">
         <div class="header">
           <strong>締切</strong>
-          <span class="muted">${upcoming.length}件</span>
+          <span class="chip active">${upcoming.length}件</span>
         </div>
         <div class="list">${items}</div>
       </div>

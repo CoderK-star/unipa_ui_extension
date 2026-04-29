@@ -130,18 +130,17 @@
           display: grid;
           grid-template-rows: auto 1fr;
           overflow: hidden;
-          color-scheme: light;
           background: #ffffff;
         }
         .search {
           display: grid;
           gap: 6px;
           padding: 12px;
-          border-bottom: 1px solid #e1e7ef;
+          border-bottom: 1px solid #eef2f7;
         }
         .search input {
           width: 100%;
-          min-height: 40px;
+          min-height: 42px;
           font-size: 15px;
         }
         .hint {
@@ -157,20 +156,20 @@
           grid-template-columns: 1fr auto;
           gap: 8px;
           align-items: center;
-          min-height: 46px;
+          min-height: 48px;
           border: 1px solid transparent;
           background: #ffffff;
           text-align: left;
         }
         .result[aria-selected="true"] {
-          border-color: #2563eb;
-          background: #eef4ff;
+          border-color: #bfdbfe;
+          background: var(--unipa-blue-soft);
         }
         .title {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-weight: 600;
+          font-weight: 800;
         }
         .subtitle {
           margin-top: 2px;
@@ -182,6 +181,7 @@
         .badge {
           color: #475467;
           font-size: 12px;
+          font-weight: 700;
         }
         .empty {
           padding: 18px 10px;
