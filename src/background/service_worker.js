@@ -33,8 +33,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.remove([
       storageKeys.autosaveEntries,
       storageKeys.navigationHistory,
-      storageKeys.keepaliveStatus
+      storageKeys.keepaliveStatus,
+      storageKeys.bulletinReadItems,
+      storageKeys.deadlineEntries,
+      storageKeys.deadlineNotifications
     ], () => sendResponse({ ok: !chrome.runtime.lastError }));
+    return true;
+  }
+
+  if (message.type === messages.deadlinesUpdated) {
+    handleDeadlinesUpdated(message).then(sendResponse);
     return true;
   }
 
@@ -84,7 +92,7 @@ function runKeepalive() {
 
     const origin = result[storageKeys.keepaliveOrigin];
     if (!origin || origin === "null") {
-      return writeStatus("未実行", "有効な UNIPA の接続先が見つかりませんでした。");
+      return writeStatus("未実行", "有効なUNIPAページが見つかりませんでした。");
     }
 
     return fetch(origin, {
@@ -101,6 +109,42 @@ function runKeepalive() {
   });
 }
 
+function handleDeadlinesUpdated(message) {
+  const settings = {
+    ...defaults,
+    ...(message.settings || {})
+  };
+
+  if (!settings.deadlineNotificationsEnabled) {
+    return Promise.resolve({ ok: true, notified: 0 });
+  }
+
+  const thresholdMs = Number(settings.deadlineNotificationHours || 24) * 60 * 60 * 1000;
+  const now = Date.now();
+  const entries = Array.isArray(message.entries) ? message.entries : [];
+
+  return read(storageKeys.deadlineNotifications).then((result) => {
+    const notified = result[storageKeys.deadlineNotifications] || {};
+    const dueSoon = entries.filter((entry) => {
+      const dueTime = Date.parse(entry.dueAt);
+      return dueTime > now && dueTime - now <= thresholdMs && !notified[entry.id];
+    });
+
+    dueSoon.forEach((entry) => {
+      chrome.notifications.create(`unipa-deadline-${entry.id}`, {
+        type: "basic",
+        iconUrl: chrome.runtime.getURL("icons/icon-128.svg"),
+        title: "UNIPA 締切通知",
+        message: `${entry.title} の締切は ${formatDate(entry.dueAt)} です。`
+      });
+      notified[entry.id] = new Date().toISOString();
+    });
+
+    return write({ [storageKeys.deadlineNotifications]: notified })
+      .then(() => ({ ok: true, notified: dueSoon.length }));
+  });
+}
+
 function writeStatus(state, detail) {
   return write({
     [storageKeys.keepaliveStatus]: {
@@ -109,4 +153,13 @@ function writeStatus(state, detail) {
       checkedAt: new Date().toISOString()
     }
   });
+}
+
+function formatDate(value) {
+  const date = new Date(value);
+  return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function pad(value) {
+  return String(value).padStart(2, "0");
 }

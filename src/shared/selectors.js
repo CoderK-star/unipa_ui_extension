@@ -8,6 +8,21 @@
       "Universal Passport",
       "unipa"
     ],
+    bulletinSignals: [
+      "\u63b2\u793a",
+      "\u304a\u77e5\u3089\u305b",
+      "\u9023\u7d61",
+      "notice",
+      "news"
+    ],
+    deadlineSignals: [
+      "\u7de0\u5207",
+      "\u63d0\u51fa",
+      "\u671f\u9650",
+      "\u671f\u65e5",
+      "deadline",
+      "due"
+    ],
     headingSelectors: [
       "h1",
       "h2",
@@ -44,6 +59,11 @@
   function textIncludesSignal(text) {
     const value = String(text || "");
     return rules.unipaSignals.some((signal) => value.includes(signal));
+  }
+
+  function hasAnySignal(text, signals) {
+    const value = String(text || "").toLowerCase();
+    return signals.some((signal) => value.includes(signal.toLowerCase()));
   }
 
   function isLikelyUnipaPage() {
@@ -103,7 +123,8 @@
     isLikelyUnipaPage,
     getPageTitle,
     findEditableElements,
-    isEditableElement
+    isEditableElement,
+    hasAnySignal
   };
 
   globalThis.UnipaExt = namespace;

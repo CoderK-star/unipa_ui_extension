@@ -10,26 +10,69 @@
     <main>
       <h1>UNIPA UI ヘルパー</h1>
 
-      <label class="row">
-        <span>
-          <strong>自動保存</strong>
-          <small>編集可能な入力欄をローカルに保存します。</small>
-        </span>
-        <input id="autosaveEnabled" type="checkbox">
-      </label>
+      <section>
+        <h2>基本機能</h2>
+        <label class="row">
+          <span>
+            <strong>自動保存</strong>
+            <small>入力内容をこの端末だけに保存します。</small>
+          </span>
+          <input id="autosaveEnabled" type="checkbox">
+        </label>
 
-      <label class="row">
-        <span>
-          <strong>セッション維持</strong>
-          <small>有効化した場合のみ、5分ごとに軽量なリクエストを送信します。</small>
-        </span>
-        <input id="keepaliveEnabled" type="checkbox">
-      </label>
+        <label class="row">
+          <span>
+            <strong>セッション維持</strong>
+            <small>明示的に有効化した場合だけ軽量リクエストを送ります。</small>
+          </span>
+          <input id="keepaliveEnabled" type="checkbox">
+        </label>
 
-      <label class="field">
-        <span>維持間隔（分）</span>
-        <input id="keepaliveIntervalMinutes" type="number" min="5" max="30" step="1">
-      </label>
+        <label class="field">
+          <span>セッション確認間隔（分）</span>
+          <input id="keepaliveIntervalMinutes" type="number" min="5" max="30" step="1">
+        </label>
+      </section>
+
+      <section>
+        <h2>情報整理</h2>
+        <label class="row">
+          <span>
+            <strong>掲示板ツール</strong>
+            <small>掲示の検索、並べ替え、既読管理を追加します。</small>
+          </span>
+          <input id="bulletinEnhancerEnabled" type="checkbox">
+        </label>
+
+        <label class="row">
+          <span>
+            <strong>PDFプレビュー</strong>
+            <small>PDFリンクをページ内で確認できるようにします。</small>
+          </span>
+          <input id="pdfViewerEnabled" type="checkbox">
+        </label>
+
+        <label class="row">
+          <span>
+            <strong>締切ダッシュボード</strong>
+            <small>検出した提出期限を画面上にまとめます。</small>
+          </span>
+          <input id="deadlineDashboardEnabled" type="checkbox">
+        </label>
+
+        <label class="row">
+          <span>
+            <strong>締切通知</strong>
+            <small>明示的に有効化した場合だけデスクトップ通知します。</small>
+          </span>
+          <input id="deadlineNotificationsEnabled" type="checkbox">
+        </label>
+
+        <label class="field">
+          <span>通知する残り時間（時間）</span>
+          <input id="deadlineNotificationHours" type="number" min="1" max="168" step="1">
+        </label>
+      </section>
 
       <section class="status">
         <span>状態</span>

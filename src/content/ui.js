@@ -11,12 +11,12 @@
     host = document.createElement("div");
     host.id = id;
     host.style.all = "initial";
-    host.style.position = position === "top" ? "sticky" : "fixed";
+    host.style.position = position === "top" ? "sticky" : position === "inline" ? "static" : "fixed";
     host.style.zIndex = "2147483647";
     if (position === "top") {
       host.style.top = "0";
       host.style.display = "block";
-    } else {
+    } else if (position !== "inline") {
       host.style.right = "16px";
       host.style.bottom = "16px";
     }
@@ -38,6 +38,11 @@
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         letter-spacing: 0;
       }
+      button, select, input {
+        font-family: inherit;
+        font-size: 13px;
+        letter-spacing: 0;
+      }
       button {
         border: 1px solid #cfd6df;
         background: #ffffff;
@@ -45,7 +50,6 @@
         border-radius: 6px;
         min-height: 30px;
         padding: 4px 10px;
-        font-size: 13px;
         line-height: 1.4;
         cursor: pointer;
       }
@@ -60,6 +64,14 @@
       button.danger {
         border-color: #b91c1c;
         color: #991b1b;
+      }
+      input, select {
+        border: 1px solid #cfd6df;
+        border-radius: 6px;
+        min-height: 30px;
+        padding: 4px 8px;
+        background: #ffffff;
+        color: #1f2937;
       }
       .panel {
         color: #1f2937;
@@ -122,7 +134,7 @@
       .slice(0, 5)
       .map((entry, index) => {
         const label = entry.title || entry.url;
-        return `<button data-index="${index}" title="${entry.url}">${escapeHtml(label)}</button>`;
+        return `<button data-index="${index}" title="${escapeHtml(entry.url)}">${escapeHtml(label)}</button>`;
       })
       .join("");
 
@@ -190,10 +202,13 @@
   }
 
   namespace.uiHelpers = {
+    createRoot,
+    baseStyles,
     renderAutosaveBar,
     hideAutosaveBar,
     renderNavigation,
-    setNavStatus
+    setNavStatus,
+    escapeHtml
   };
 
   globalThis.UnipaExt = namespace;

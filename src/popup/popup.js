@@ -1,56 +1,82 @@
 (function () {
-  const namespace = window.UnipaExt;
+  const namespace = globalThis.UnipaExt;
   const { storageKeys, messages } = namespace.constants;
   const { read, getSettings, setSettings, sendMessage } = namespace.storage;
 
-  const autosaveEnabled = document.getElementById("autosaveEnabled");
-  const keepaliveEnabled = document.getElementById("keepaliveEnabled");
-  const keepaliveIntervalMinutes = document.getElementById("keepaliveIntervalMinutes");
+  const fields = {
+    autosaveEnabled: document.getElementById("autosaveEnabled"),
+    keepaliveEnabled: document.getElementById("keepaliveEnabled"),
+    keepaliveIntervalMinutes: document.getElementById("keepaliveIntervalMinutes"),
+    bulletinEnhancerEnabled: document.getElementById("bulletinEnhancerEnabled"),
+    pdfViewerEnabled: document.getElementById("pdfViewerEnabled"),
+    deadlineDashboardEnabled: document.getElementById("deadlineDashboardEnabled"),
+    deadlineNotificationsEnabled: document.getElementById("deadlineNotificationsEnabled"),
+    deadlineNotificationHours: document.getElementById("deadlineNotificationHours")
+  };
+
   const keepaliveStatus = document.getElementById("keepaliveStatus");
   const clearData = document.getElementById("clearData");
   const message = document.getElementById("message");
 
   function load() {
     getSettings().then((settings) => {
-      autosaveEnabled.checked = Boolean(settings.autosaveEnabled);
-      keepaliveEnabled.checked = Boolean(settings.keepaliveEnabled);
-      keepaliveIntervalMinutes.value = settings.keepaliveIntervalMinutes;
+      Object.entries(fields).forEach(([key, element]) => {
+        if (!element) {
+          return;
+        }
+        if (element.type === "checkbox") {
+          element.checked = Boolean(settings[key]);
+        } else {
+          element.value = settings[key];
+        }
+      });
     });
 
     read(storageKeys.keepaliveStatus).then((result) => {
       const status = result[storageKeys.keepaliveStatus];
-      if (!status) {
-        keepaliveStatus.textContent = "未確認";
-        return;
-      }
-      keepaliveStatus.textContent = `${status.state}: ${status.detail}`;
+      keepaliveStatus.textContent = status ? `${status.state}: ${status.detail}` : "未確認";
     });
   }
 
   function save() {
     const settings = {
-      autosaveEnabled: autosaveEnabled.checked,
-      keepaliveEnabled: keepaliveEnabled.checked,
-      keepaliveIntervalMinutes: Math.max(5, Number(keepaliveIntervalMinutes.value) || 5)
+      autosaveEnabled: fields.autosaveEnabled.checked,
+      keepaliveEnabled: fields.keepaliveEnabled.checked,
+      keepaliveIntervalMinutes: clampNumber(fields.keepaliveIntervalMinutes.value, 5, 30, 5),
+      bulletinEnhancerEnabled: fields.bulletinEnhancerEnabled.checked,
+      pdfViewerEnabled: fields.pdfViewerEnabled.checked,
+      deadlineDashboardEnabled: fields.deadlineDashboardEnabled.checked,
+      deadlineNotificationsEnabled: fields.deadlineNotificationsEnabled.checked,
+      deadlineNotificationHours: clampNumber(fields.deadlineNotificationHours.value, 1, 168, 24)
     };
 
     setSettings(settings)
       .then(() => sendMessage({ type: messages.settingsChanged }))
       .then(() => {
-        message.textContent = "設定を保存しました。";
+        message.textContent = "設定を保存しました。UNIPAページを再読み込みすると反映されます。";
         setTimeout(() => {
           message.textContent = "";
-        }, 1800);
+        }, 2200);
       });
   }
 
-  autosaveEnabled.addEventListener("change", save);
-  keepaliveEnabled.addEventListener("change", save);
-  keepaliveIntervalMinutes.addEventListener("change", save);
+  function clampNumber(value, min, max, fallback) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) {
+      return fallback;
+    }
+    return Math.min(max, Math.max(min, number));
+  }
+
+  Object.values(fields).forEach((element) => {
+    if (element) {
+      element.addEventListener("change", save);
+    }
+  });
 
   clearData.addEventListener("click", () => {
     sendMessage({ type: messages.clearLocalData }).then(() => {
-      message.textContent = "ローカルの下書きとナビゲーション履歴を削除しました。";
+      message.textContent = "下書き、掲示板、ナビゲーション、締切のローカルデータを削除しました。";
       load();
     });
   });
