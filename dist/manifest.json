@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "UNIPA UI ヘルパー",
+  "version": "0.3.0",
+  "description": "UNIVERSAL PASSPORT の画面をローカルだけで使いやすくする拡張機能です。",
+  "permissions": [
+    "alarms",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://rp.reitaku-u.ac.jp/*"
+  ],
+  "background": {
+    "service_worker": "src/background/service_worker.js"
+  },
+  "action": {
+    "default_title": "UNIPA UI ヘルパー",
+    "default_popup": "src/popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://rp.reitaku-u.ac.jp/*"
+      ],
+      "js": [
+        "src/shared/constants.js",
+        "src/shared/storage.js",
+        "src/shared/utils.js",
+        "src/shared/selectors.js",
+        "src/content/ui.js",
+        "src/content/autosave.js",
+        "src/content/navigation.js",
+        "src/content/pdf_viewer.js",
+        "src/content/command_palette.js",
+        "src/content/main.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

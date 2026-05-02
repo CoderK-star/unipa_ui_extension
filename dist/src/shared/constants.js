@@ -1,0 +1,41 @@
+(function () {
+  const namespace = globalThis.UnipaExt || {};
+
+  namespace.constants = {
+    unipaHostname: "rp.reitaku-u.ac.jp",
+    storageKeys: {
+      autosaveEntries: "unipa.autosave.entries",
+      navigationHistory: "unipa.navigation.history",
+      settings: "unipa.settings",
+      keepaliveStatus: "unipa.keepalive.status",
+      keepaliveOrigin: "unipa.keepalive.origin"
+    },
+    defaults: {
+      autosaveEnabled: true,
+      keepaliveEnabled: false,
+      keepaliveIntervalMinutes: 5,
+      pdfViewerEnabled: true,
+      commandPaletteEnabled: true
+    },
+    limits: {
+      navigationHistorySize: 10,
+      autosaveDebounceMs: 800,
+      autosaveIntervalMs: 30000,
+      maxDraftAgeDays: 30
+    },
+    ui: {
+      rootId: "unipa-ui-helper-root",
+      autosaveRootId: "unipa-ui-helper-autosave-root",
+      navRootId: "unipa-ui-helper-nav-root",
+      pdfRootId: "unipa-ui-helper-pdf-root",
+      commandPaletteRootId: "unipa-ui-helper-command-palette-root"
+    },
+    messages: {
+      pageSeen: "UNIPA_PAGE_SEEN",
+      settingsChanged: "UNIPA_SETTINGS_CHANGED",
+      clearLocalData: "UNIPA_CLEAR_LOCAL_DATA"
+    }
+  };
+
+  globalThis.UnipaExt = namespace;
+})();
