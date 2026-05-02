@@ -9,7 +9,7 @@
     "storage"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "*://rp.reitaku-u.ac.jp/*"
   ],
   "background": {
     "service_worker": "src/background/service_worker.js"
@@ -21,20 +21,17 @@
   "content_scripts": [
     {
       "matches": [
-        "http://*/*",
-        "https://*/*",
-        "file:///*"
+        "*://rp.reitaku-u.ac.jp/*"
       ],
       "js": [
         "src/shared/constants.js",
         "src/shared/storage.js",
+        "src/shared/utils.js",
         "src/shared/selectors.js",
         "src/content/ui.js",
         "src/content/autosave.js",
         "src/content/navigation.js",
-        "src/content/bulletin.js",
         "src/content/pdf_viewer.js",
-        "src/content/deadline_dashboard.js",
         "src/content/command_palette.js",
         "src/content/main.js"
       ],

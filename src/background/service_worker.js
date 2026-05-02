@@ -1,8 +1,9 @@
-importScripts("../shared/constants.js", "../shared/storage.js");
+importScripts("../shared/constants.js", "../shared/storage.js", "../shared/utils.js");
 
 const namespace = self.UnipaExt;
 const { storageKeys, defaults, messages } = namespace.constants;
 const { read, write, getSettings } = namespace.storage;
+const { formatDateTime } = namespace.utils;
 
 const KEEPALIVE_ALARM = "unipa.keepalive";
 
@@ -62,6 +63,18 @@ function handlePageSeen(message) {
     ...defaults,
     ...(message.settings || {})
   };
+
+  // UNIPAドメイン以外からの通知は keepaliveOrigin を更新しない
+  const { unipaHostname } = namespace.constants;
+  let originHostname;
+  try {
+    originHostname = new URL(message.origin).hostname;
+  } catch (_) {
+    return Promise.resolve({ ok: false, reason: "invalid origin" });
+  }
+  if (originHostname !== unipaHostname) {
+    return syncKeepaliveAlarm(settings).then(() => ({ ok: true }));
+  }
 
   return write({ [storageKeys.keepaliveOrigin]: message.origin })
     .then(() => syncKeepaliveAlarm(settings))
@@ -133,9 +146,9 @@ function handleDeadlinesUpdated(message) {
     dueSoon.forEach((entry) => {
       chrome.notifications.create(`unipa-deadline-${entry.id}`, {
         type: "basic",
-        iconUrl: chrome.runtime.getURL("icons/icon-128.svg"),
+        iconUrl: chrome.runtime.getURL("icons/icon-128.png"),
         title: "UNIPA 締切通知",
-        message: `${entry.title} の締切は ${formatDate(entry.dueAt)} です。`
+        message: `${entry.title} の締切は ${formatDateTime(entry.dueAt)} です。`
       });
       notified[entry.id] = new Date().toISOString();
     });
@@ -155,11 +168,3 @@ function writeStatus(state, detail) {
   });
 }
 
-function formatDate(value) {
-  const date = new Date(value);
-  return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-}
-
-function pad(value) {
-  return String(value).padStart(2, "0");
-}

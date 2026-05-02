@@ -16,6 +16,15 @@
     if (position === "top") {
       host.style.top = "0";
       host.style.display = "block";
+    } else if (position === "modal") {
+      host.style.boxSizing = "border-box"; // padding が width/height に含まれるよう明示（style.all: initial で content-box になるため）
+      host.style.inset = "0";
+      host.style.width = "100%";
+      host.style.height = "100%";
+      host.style.display = "grid";
+      host.style.placeItems = "start center";
+      host.style.padding = "12vh 16px 16px";
+      host.style.background = "rgba(15, 23, 42, 0.26)";
     } else if (position !== "inline") {
       host.style.right = "16px";
       host.style.bottom = "16px";

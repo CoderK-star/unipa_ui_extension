@@ -68,16 +68,11 @@
 
   function isLikelyUnipaPage() {
     const host = location.hostname.toLowerCase();
-    if (host.includes("unipa")) {
-      return true;
-    }
-
-    if (textIncludesSignal(document.title)) {
-      return true;
-    }
-
-    const bodyText = document.body ? document.body.innerText.slice(0, 4000) : "";
-    return textIncludesSignal(bodyText);
+    const unipaHost = (namespace.constants.unipaHostname || "").toLowerCase();
+    // manifest.json で注入先ドメインを制限済みのため、ホスト名の完全一致のみで判定する。
+    // 本文テキストによるフォールバックは "unipa" という文字列を含む任意のページ
+    // （例: GitHub 上の unipa_ui_extension リポジトリ）で偽陽性を引き起こすため使用しない。
+    return unipaHost ? host === unipaHost : false;
   }
 
   function getPageTitle() {

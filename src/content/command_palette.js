@@ -2,6 +2,7 @@
   const namespace = globalThis.UnipaExt || {};
   const { storageKeys, ui } = namespace.constants;
   const { read, stableHash } = namespace.storage;
+  const { normalizeText, debounce } = namespace.utils;
   const { createRoot, baseStyles, escapeHtml } = namespace.uiHelpers;
 
   const builtInKeywords = [
@@ -19,14 +20,21 @@
 
   function start() {
     rebuildCommands();
-    document.addEventListener("keydown", handleKeydown, true);
+    // document ではなく window に登録することで、JSF 等が document レベルで
+    // stopImmediatePropagation() しても確実にショートカットを受け取る
+    window.addEventListener("keydown", handleKeydown, true);
 
     const observer = new MutationObserver(debounce(rebuildCommands, 500));
     observer.observe(document.documentElement, { childList: true, subtree: true });
   }
 
   function handleKeydown(event) {
-    const isPaletteShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k";
+    // event.key はキーボードレイアウトによって変わるため (例: Mac で Alt+K → "˚")、
+    // event.code（物理キー）も併用して確実に検出する
+    const isKKey = event.key.toLowerCase() === "k" || event.code === "KeyK";
+    const isAltShortcut = event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey && isKKey;
+    const isFallbackShortcut = (event.ctrlKey || event.metaKey) && event.shiftKey && isKKey;
+    const isPaletteShortcut = isAltShortcut || isFallbackShortcut;
     if (!isPaletteShortcut) {
       return;
     }
@@ -105,6 +113,11 @@
   }
 
   function openPalette() {
+    // すでに開いている場合はトグルで閉じる（重複レンダリング・イベント二重登録を防ぐ）
+    if (document.getElementById(ui.commandPaletteRootId)) {
+      closePalette();
+      return;
+    }
     rebuildCommands().then(() => {
       selectedIndex = 0;
       renderPalette();
@@ -113,14 +126,6 @@
 
   function renderPalette() {
     const shadow = createRoot(ui.commandPaletteRootId, "modal");
-    const host = document.getElementById(ui.commandPaletteRootId);
-    host.style.inset = "0";
-    host.style.right = "auto";
-    host.style.bottom = "auto";
-    host.style.display = "grid";
-    host.style.placeItems = "start center";
-    host.style.padding = "12vh 16px 16px";
-    host.style.background = "rgba(15, 23, 42, 0.26)";
 
     shadow.innerHTML = `
       <style>${baseStyles()}
@@ -237,6 +242,7 @@
           <span class="footer-hint"><kbd>↑↓</kbd> 選択</span>
           <span class="footer-hint"><kbd>↵</kbd> 実行</span>
           <span class="footer-hint"><kbd>Esc</kbd> 閉じる</span>
+          <span class="footer-hint"><kbd>Alt/⌥+K</kbd> 起動</span>
         </div>
       </div>
     `;
@@ -247,18 +253,29 @@
       renderResults(shadow, input.value);
     });
     input.addEventListener("keydown", (event) => handlePaletteKeydown(event, shadow));
-    shadow.host.addEventListener("click", (event) => {
-      if (event.composedPath()[0] === shadow.host) {
+    // オーバーレイ背景クリックで閉じる（shadow.host = モーダル全体の div）
+    // composedPath()[0] が host 自身 = パレット外の背景をクリックした場合
+    shadow.host.addEventListener("mousedown", (event) => {
+      if (event.target === shadow.host) {
         closePalette();
       }
     });
 
     renderResults(shadow, "");
-    input.focus();
+    // requestAnimationFrame でフォーカスを確実に当てる
+    requestAnimationFrame(() => input.focus());
   }
 
   function handlePaletteKeydown(event, shadow) {
-    const visible = getVisibleCommands(shadow.querySelector("[data-query]").value);
+    // パレットがすでに閉じられている場合（Alt+K で同時クローズなど）は何もしない
+    if (!document.getElementById(ui.commandPaletteRootId)) {
+      return;
+    }
+    const queryEl = shadow.querySelector("[data-query]");
+    if (!queryEl) {
+      return;
+    }
+    const visible = getVisibleCommands(queryEl.value);
     if (event.key === "Escape") {
       event.preventDefault();
       closePalette();
@@ -267,13 +284,13 @@
     if (event.key === "ArrowDown") {
       event.preventDefault();
       selectedIndex = Math.min(selectedIndex + 1, Math.max(visible.length - 1, 0));
-      renderResults(shadow, shadow.querySelector("[data-query]").value);
+      renderResults(shadow, queryEl.value);
       return;
     }
     if (event.key === "ArrowUp") {
       event.preventDefault();
       selectedIndex = Math.max(selectedIndex - 1, 0);
-      renderResults(shadow, shadow.querySelector("[data-query]").value);
+      renderResults(shadow, queryEl.value);
       return;
     }
     if (event.key === "Enter" && visible[selectedIndex]) {
@@ -353,18 +370,6 @@
     } catch (error) {
       return null;
     }
-  }
-
-  function normalizeText(text) {
-    return String(text || "").replace(/\s+/g, " ").trim();
-  }
-
-  function debounce(callback, waitMs) {
-    let timer = null;
-    return () => {
-      clearTimeout(timer);
-      timer = setTimeout(callback, waitMs);
-    };
   }
 
   namespace.commandPalette = { start, openPalette };

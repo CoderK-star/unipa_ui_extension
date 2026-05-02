@@ -27,16 +27,8 @@
 
       namespace.navigation.start();
 
-      if (settings.bulletinEnhancerEnabled) {
-        namespace.bulletin.start();
-      }
-
       if (settings.pdfViewerEnabled) {
         namespace.pdfViewer.start();
-      }
-
-      if (settings.deadlineDashboardEnabled) {
-        namespace.deadlineDashboard.start(settings);
       }
 
       if (settings.commandPaletteEnabled) {

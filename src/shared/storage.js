@@ -8,12 +8,21 @@
     return chrome.storage.local;
   }
 
+  function isContextInvalidated(error) {
+    return error && typeof error.message === "string" && error.message.includes("Extension context invalidated");
+  }
+
   function read(keys) {
     const storage = getChromeStorage();
     if (!storage) {
       return Promise.resolve({});
     }
-    return storage.get(keys);
+    return storage.get(keys).catch((error) => {
+      if (isContextInvalidated(error)) {
+        return {};
+      }
+      throw error;
+    });
   }
 
   function write(items) {
@@ -21,7 +30,12 @@
     if (!storage) {
       return Promise.resolve();
     }
-    return storage.set(items);
+    return storage.set(items).catch((error) => {
+      if (isContextInvalidated(error)) {
+        return;
+      }
+      throw error;
+    });
   }
 
   function remove(keys) {
@@ -29,7 +43,12 @@
     if (!storage) {
       return Promise.resolve();
     }
-    return storage.remove(keys);
+    return storage.remove(keys).catch((error) => {
+      if (isContextInvalidated(error)) {
+        return;
+      }
+      throw error;
+    });
   }
 
   function stableHash(value) {
